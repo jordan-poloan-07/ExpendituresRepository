@@ -30,6 +30,8 @@ import com.poloan.androidsqlite.utilities.Command;
 public class MainActivity extends Activity implements View.OnClickListener,
 		DateDialogDateCallback {
 
+	private static final String FILE_KEY = "time_key";
+
 	private ExpenditureDatasource expenditureDatasource;
 
 	private EditText expendAmountInput;
@@ -38,9 +40,9 @@ public class MainActivity extends Activity implements View.OnClickListener,
 	private TextView totalExpendAmount;
 	private ArrayAdapter<Expenditure> arrayAdapter;
 
-	private DateTime time;
-
 	private MainActivityCommand changeListener;
+
+	private DateTime time;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,19 @@ public class MainActivity extends Activity implements View.OnClickListener,
 		expenditureDatasource = new ExpenditureDatasource(this);
 		expenditureDatasource.open();
 
+		// setting of time here
+		if (savedInstanceState == null) {
+			time = new DateTime();
+		} else {
+			if (savedInstanceState.containsKey(FILE_KEY)) {
+				time = (DateTime) savedInstanceState.getSerializable(FILE_KEY);
+			} else {
+				time = new DateTime();
+			}
+		}
+
 		final List<Expenditure> expenditures = expenditureDatasource
-				.getAllExpendituresForToday();
+				.getSelectedExpenditures(time);
 
 		arrayAdapter = new ArrayAdapter<Expenditure>(this,
 				android.R.layout.simple_list_item_1, expenditures);
@@ -157,11 +170,20 @@ public class MainActivity extends Activity implements View.OnClickListener,
 			DialogFragment newFragment = new DateDialogFragment();
 			newFragment.show(getFragmentManager(), "datePicker");
 			return true;
+		case R.id.report:
+			// open report activity
+			return true;
 		case R.id.action_settings:
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putSerializable(FILE_KEY, time);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override

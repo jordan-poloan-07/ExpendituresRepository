@@ -9,6 +9,7 @@
     <string name="expenditureInputHint">0.0</string>
     <string name="totalLabel">"Total : "</string>
     <string name="action_search">Change Date</string>
+    <string name="action_report">Report</string>
     <string name="action_settings">Settings</string>
 	
 </resources>

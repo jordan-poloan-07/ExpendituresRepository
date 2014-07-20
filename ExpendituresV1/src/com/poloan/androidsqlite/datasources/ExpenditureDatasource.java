@@ -11,6 +11,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.poloan.androidsqlite.database.SQLiteHelper;
 import com.poloan.androidsqlite.entity.Expenditure;
 
@@ -85,24 +87,35 @@ public class ExpenditureDatasource {
 	public List<Expenditure> getAllExpendituresForToday() {
 
 		DateTime now = new DateTime();
+
 		return getSelectedExpenditures(now);
 
 	}
 
-	public List<Expenditure> getSelectedExpenditures(DateTime time) {
-		List<Expenditure> expenditures = new ArrayList<Expenditure>();
+	public List<Expenditure> getSelectedExpenditures(final DateTime time) {
 
-		for (Expenditure exp : getAllExpenditures()) {
+		Predicate<Expenditure> timePredicate = new Predicate<Expenditure>() {
+			@Override
+			public boolean apply(Expenditure exp) {
 
-			int expDay = exp.getDateTime().getDayOfMonth();
-			int expMonth = exp.getDateTime().getMonthOfYear();
-			int expYear = exp.getDateTime().getYear();
+				int expDay = exp.getDateTime().getDayOfMonth();
+				int expMonth = exp.getDateTime().getMonthOfYear();
+				int expYear = exp.getDateTime().getYear();
 
-			if (time.getYear() == expYear && time.getMonthOfYear() == expMonth
-					&& time.getDayOfMonth() == expDay)
-				expenditures.add(exp);
+				return (time.getYear() == expYear
+						&& time.getMonthOfYear() == expMonth && time
+						.getDayOfMonth() == expDay);
+			}
+		};
 
-		}
+		return getSelectedExpenditures(time, timePredicate);
+	}
+
+	public List<Expenditure> getSelectedExpenditures(final DateTime time,
+			Predicate<Expenditure> timePredicate) {
+
+		List<Expenditure> expenditures = new ArrayList<Expenditure>(
+				Collections2.filter(getAllExpenditures(), timePredicate));
 
 		return expenditures;
 	}
@@ -127,4 +140,5 @@ public class ExpenditureDatasource {
 
 		return expenditure;
 	}
+
 }
