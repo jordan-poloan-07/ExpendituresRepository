@@ -1,7 +1,9 @@
 package com.poloan.androidsqlite;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 import org.joda.time.DateTime;
 
@@ -23,12 +25,14 @@ import com.google.common.primitives.Doubles;
 import com.poloan.androidsqlite.activitycommands.MainActivityCommand;
 import com.poloan.androidsqlite.datasources.ExpenditureDatasource;
 import com.poloan.androidsqlite.dialogs.DateDialogFragment;
-import com.poloan.androidsqlite.dialogs.DateDialogFragment.DateDialogDateCallback;
+import com.poloan.androidsqlite.dialogs.DateDialogFragment.DateDialogCallback;
+import com.poloan.androidsqlite.dialogs.ReportActivityListDialogFragment;
+import com.poloan.androidsqlite.dialogs.ReportActivityListDialogFragment.ReportActivityListCallback;
 import com.poloan.androidsqlite.entity.Expenditure;
 import com.poloan.androidsqlite.utilities.Command;
 
 public class MainActivity extends Activity implements View.OnClickListener,
-		DateDialogDateCallback {
+		DateDialogCallback, ReportActivityListCallback {
 
 	private static final String FILE_KEY = "time_key";
 
@@ -109,8 +113,12 @@ public class MainActivity extends Activity implements View.OnClickListener,
 					total = total.add(exp.getAmount());
 				}
 
-				totalExpendAmount.setText(getString(R.string.totalLabel)
-						+ total.toPlainString());
+				String text = String.format("%s : %s %.2f",
+						getString(R.string.totalLabel),
+						Currency.getInstance(Locale.getDefault()),
+						total.floatValue());
+
+				totalExpendAmount.setText(text);
 			}
 		});
 	}
@@ -157,6 +165,11 @@ public class MainActivity extends Activity implements View.OnClickListener,
 	}
 
 	@Override
+	public void executeReportActivity(String reportActivity) {
+		toastMessage(reportActivity);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_activity_actions, menu);
@@ -171,7 +184,8 @@ public class MainActivity extends Activity implements View.OnClickListener,
 			newFragment.show(getFragmentManager(), "datePicker");
 			return true;
 		case R.id.report:
-			// open report activity
+			DialogFragment newFragment2 = new ReportActivityListDialogFragment();
+			newFragment2.show(getFragmentManager(), "reportActivityPicker");
 			return true;
 		case R.id.action_settings:
 			return true;

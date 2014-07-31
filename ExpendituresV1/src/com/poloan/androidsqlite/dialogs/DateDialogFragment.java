@@ -11,12 +11,12 @@ import android.widget.DatePicker;
 public class DateDialogFragment extends DialogFragment implements
 		DatePickerDialog.OnDateSetListener {
 
-	public interface DateDialogDateCallback {
+	public interface DateDialogCallback {
 
 		void changeDate(DateTime date);
 	}
 
-	private DateDialogDateCallback dddcBack;
+	private DateDialogCallback dddcBack;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class DateDialogFragment extends DialogFragment implements
 		// android, (or java date api numbers it 0-11)
 		int nowDay = now.getDayOfMonth();
 
-		dddcBack = (DateDialogDateCallback) getActivity();
+		dddcBack = (DateDialogCallback) getActivity();
 
 		return new DatePickerDialog(getActivity(), this, nowYear, nowMonth,
 				nowDay);

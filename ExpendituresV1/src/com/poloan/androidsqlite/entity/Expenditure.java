@@ -1,9 +1,13 @@
 package com.poloan.androidsqlite.entity;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Date;
+import java.util.Locale;
 
 import org.joda.time.DateTime;
+
+import android.annotation.SuppressLint;
 
 public class Expenditure {
 
@@ -35,9 +39,11 @@ public class Expenditure {
 		this.dateTime = dateTime;
 	}
 
+	@SuppressLint("DefaultLocale")
 	@Override
 	public String toString() {
-		return "Php " + amount.toPlainString() + ", " + dateTime.toString();
+		return String.format("%s %.2f",
+				Currency.getInstance(Locale.getDefault()), amount.floatValue());
 	}
 
 }
