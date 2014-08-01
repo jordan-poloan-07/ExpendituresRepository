@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ExpendituresV1</string>
+    <string name="app_name">Expenditures</string>
     <string name="hello_world">Hello world!</string>
     <string name="clear_string"></string>
     <string name="amountLabel">New Amount</string>
     <string name="buttonLabel">Add</string>
     <string name="expenditureInputHint">0.0</string>
-    <string name="totalLabel">"Total : "</string>
+    <string name="totalLabel">"Total"</string>
     <string name="report_dialog_title">Reports</string>
     <string name="action_search">Change Date</string>
     <string name="action_report">Report</string>
