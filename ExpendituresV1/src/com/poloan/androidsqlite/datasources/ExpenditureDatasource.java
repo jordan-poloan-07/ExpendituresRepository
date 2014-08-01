@@ -136,8 +136,8 @@ public class ExpenditureDatasource {
 
 				DateTime now = (setDate != null) ? setDate : getNow();
 
-				boolean month = exp.getDateTime().monthOfYear() == now
-						.monthOfYear();
+				boolean month = exp.getDateTime().getMonthOfYear() == now
+						.getMonthOfYear();
 
 				boolean year = exp.getDateTime().getYear() == now.getYear();
 

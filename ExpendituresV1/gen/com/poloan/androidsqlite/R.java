@@ -15,10 +15,11 @@ public final class R {
     }
     public static final class id {
         public static final int button1=0x7f070002;
-        public static final int change_date=0x7f070005;
+        public static final int change_date=0x7f070006;
         public static final int editText1=0x7f070001;
+        public static final int fragment_simple_id=0x7f070005;
         public static final int listView1=0x7f070004;
-        public static final int report=0x7f070006;
+        public static final int report=0x7f070007;
         public static final int textView1=0x7f070000;
         public static final int textView2=0x7f070003;
     }
@@ -31,17 +32,20 @@ public final class R {
         public static final int main_activity_actions=0x7f060000;
     }
     public static final class string {
-        public static final int action_report=0x7f040009;
-        public static final int action_search=0x7f040008;
-        public static final int action_settings=0x7f04000a;
-        public static final int amountLabel=0x7f040003;
+        public static final int action_report=0x7f040007;
+        public static final int action_search=0x7f040006;
+        public static final int action_settings=0x7f040008;
+        public static final int amountLabel=0x7f040002;
         public static final int app_name=0x7f040000;
-        public static final int buttonLabel=0x7f040004;
-        public static final int clear_string=0x7f040002;
+        public static final int buttonLabel=0x7f040003;
+        public static final int clear_string=0x7f040001;
         public static final int expenditureInputHint=0x7f040005;
-        public static final int hello_world=0x7f040001;
-        public static final int report_dialog_title=0x7f040007;
-        public static final int totalLabel=0x7f040006;
+        public static final int report_activity_custom=0x7f04000d;
+        public static final int report_activity_month=0x7f04000b;
+        public static final int report_activity_week=0x7f04000a;
+        public static final int report_activity_year=0x7f04000c;
+        public static final int report_dialog_title=0x7f040009;
+        public static final int totalLabel=0x7f040004;
     }
     public static final class style {
         /** 

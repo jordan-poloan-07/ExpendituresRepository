@@ -2,15 +2,20 @@
 <resources>
 
     <string name="app_name">Expenditures</string>
-    <string name="hello_world">Hello world!</string>
     <string name="clear_string"></string>
     <string name="amountLabel">New Amount</string>
-    <string name="buttonLabel">Add</string>
+    <string name="buttonLabel">Add Amount</string>
+    <string name="totalLabel">Total</string>
     <string name="expenditureInputHint">0.0</string>
-    <string name="totalLabel">"Total"</string>
-    <string name="report_dialog_title">Reports</string>
+    
     <string name="action_search">Change Date</string>
     <string name="action_report">Report</string>
     <string name="action_settings">Settings</string>
-	
+    
+    <string name="report_dialog_title">Reports</string>
+    <string name="report_activity_week">week</string>
+    <string name="report_activity_month">month</string>
+    <string name="report_activity_year">year</string>
+    <string name="report_activity_custom">custom</string>
+
 </resources>
