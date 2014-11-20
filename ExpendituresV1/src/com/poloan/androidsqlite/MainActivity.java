@@ -1,12 +1,15 @@
 package com.poloan.androidsqlite;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 import org.joda.time.DateTime;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,12 +26,12 @@ import com.google.common.primitives.Doubles;
 import com.poloan.androidsqlite.activitycommands.MainActivityCommand;
 import com.poloan.androidsqlite.datasources.ExpenditureDatasource;
 import com.poloan.androidsqlite.dialogs.DateDialogFragment;
-import com.poloan.androidsqlite.dialogs.DateDialogFragment.DateDialogDateCallback;
+import com.poloan.androidsqlite.dialogs.DateDialogFragment.DateDialogCallback;
 import com.poloan.androidsqlite.entity.Expenditure;
 import com.poloan.androidsqlite.utilities.Command;
 
 public class MainActivity extends Activity implements View.OnClickListener,
-		DateDialogDateCallback {
+		DateDialogCallback {
 
 	private static final String FILE_KEY = "time_key";
 
@@ -42,7 +45,7 @@ public class MainActivity extends Activity implements View.OnClickListener,
 
 	private MainActivityCommand changeListener;
 
-	private DateTime time;
+	private DateTime setDate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,17 +63,17 @@ public class MainActivity extends Activity implements View.OnClickListener,
 
 		// setting of time here
 		if (savedInstanceState == null) {
-			time = new DateTime();
+			setDate = new DateTime();
 		} else {
 			if (savedInstanceState.containsKey(FILE_KEY)) {
-				time = (DateTime) savedInstanceState.getSerializable(FILE_KEY);
+				setDate = (DateTime) savedInstanceState.getSerializable(FILE_KEY);
 			} else {
-				time = new DateTime();
+				setDate = new DateTime();
 			}
 		}
 
 		final List<Expenditure> expenditures = expenditureDatasource
-				.getSelectedExpenditures(time);
+				.getExpendituresByDate(setDate);
 
 		arrayAdapter = new ArrayAdapter<Expenditure>(this,
 				android.R.layout.simple_list_item_1, expenditures);
@@ -93,7 +96,7 @@ public class MainActivity extends Activity implements View.OnClickListener,
 			public void execute() {
 				expenditures.clear();
 				List<Expenditure> selectedExpenditures = expenditureDatasource
-						.getSelectedExpenditures(time);
+						.getExpendituresByDate(setDate);
 				expenditures.addAll(selectedExpenditures);
 				arrayAdapter.notifyDataSetChanged();
 			}
@@ -109,8 +112,12 @@ public class MainActivity extends Activity implements View.OnClickListener,
 					total = total.add(exp.getAmount());
 				}
 
-				totalExpendAmount.setText(getString(R.string.totalLabel)
-						+ total.toPlainString());
+				String text = String.format("%s : %s %.2f",
+						getString(R.string.totalLabel),
+						Currency.getInstance(Locale.getDefault()),
+						total.floatValue());
+
+				totalExpendAmount.setText(text);
 			}
 		});
 	}
@@ -121,8 +128,8 @@ public class MainActivity extends Activity implements View.OnClickListener,
 		if (v == inputBtn) {
 
 			String amount = expendAmountInput.getText().toString();
-			String date = String.valueOf(time == null ? System
-					.currentTimeMillis() : time.toInstant().getMillis());
+			String date = String.valueOf(setDate == null ? System
+					.currentTimeMillis() : setDate.toInstant().getMillis());
 
 			Expenditure exp = addExpenditure(amount, date);
 
@@ -135,24 +142,9 @@ public class MainActivity extends Activity implements View.OnClickListener,
 
 	}
 
-	private Expenditure addExpenditure(String amount, String date) {
-
-		if (Doubles.tryParse(amount) != null) {
-			return expenditureDatasource.addExpenditure(amount, date);
-		} else {
-			toastMessage("Input a valid number in the text field");
-			return null;
-		}
-
-	}
-
-	private void toastMessage(String text) {
-		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-	}
-
 	@Override
 	public void changeDate(DateTime date) {
-		time = date;
+		setDate = date;
 		changeListener.dateChange();
 	}
 
@@ -171,9 +163,12 @@ public class MainActivity extends Activity implements View.OnClickListener,
 			newFragment.show(getFragmentManager(), "datePicker");
 			return true;
 		case R.id.report:
-			// open report activity
-			return true;
-		case R.id.action_settings:
+			// DialogFragment newFragment2 = new
+			// ReportActivityListDialogFragment();
+			// newFragment2.show(getFragmentManager(), "reportActivityPicker");
+			Intent i = new Intent(this, ReportActivity.class);
+			i.putExtra("setDate", setDate);
+			startActivity(i);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -182,7 +177,7 @@ public class MainActivity extends Activity implements View.OnClickListener,
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(FILE_KEY, time);
+		outState.putSerializable(FILE_KEY, setDate);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -201,4 +196,18 @@ public class MainActivity extends Activity implements View.OnClickListener,
 		super.onPause();
 	}
 
+	private Expenditure addExpenditure(String amount, String date) {
+
+		if (Doubles.tryParse(amount) != null) {
+			return expenditureDatasource.addExpenditure(amount, date);
+		} else {
+			toastMessage("Input a valid number in the text field");
+			return null;
+		}
+
+	}
+
+	private void toastMessage(String text) {
+		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+	}
 }

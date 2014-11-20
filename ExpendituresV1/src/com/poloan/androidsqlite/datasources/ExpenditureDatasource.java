@@ -81,18 +81,16 @@ public class ExpenditureDatasource {
 		cursor.close();
 
 		return expenditures;
-
 	}
 
-	public List<Expenditure> getAllExpendituresForToday() {
+	public List<Expenditure> getExpendituresForToday() {
 
 		DateTime now = new DateTime();
 
-		return getSelectedExpenditures(now);
-
+		return getExpendituresByDate(now);
 	}
 
-	public List<Expenditure> getSelectedExpenditures(final DateTime time) {
+	public List<Expenditure> getExpendituresByDate(final DateTime date) {
 
 		Predicate<Expenditure> timePredicate = new Predicate<Expenditure>() {
 			@Override
@@ -102,16 +100,85 @@ public class ExpenditureDatasource {
 				int expMonth = exp.getDateTime().getMonthOfYear();
 				int expYear = exp.getDateTime().getYear();
 
-				return (time.getYear() == expYear
-						&& time.getMonthOfYear() == expMonth && time
+				return (date.getYear() == expYear
+						&& date.getMonthOfYear() == expMonth && date
 						.getDayOfMonth() == expDay);
 			}
 		};
 
-		return getSelectedExpenditures(time, timePredicate);
+		return getSelectedExpenditures(timePredicate);
 	}
 
-	public List<Expenditure> getSelectedExpenditures(final DateTime time,
+	public List<Expenditure> getExpendituresThisWeek(final DateTime setDate) {
+
+		Predicate<Expenditure> weekPredicate = new Predicate<Expenditure>() {
+			@Override
+			public boolean apply(Expenditure exp) {
+				DateTime now = (setDate != null) ? setDate : getNow();
+
+				boolean week = exp.getDateTime().getWeekOfWeekyear() == now
+						.getWeekOfWeekyear();
+
+				boolean year = exp.getDateTime().getYear() == now.getYear();
+
+				return week && year;
+			}
+		};
+
+		return getSelectedExpenditures(weekPredicate);
+	}
+
+	public List<Expenditure> getExpendituresThisMonth(final DateTime setDate) {
+
+		Predicate<Expenditure> monthPredicate = new Predicate<Expenditure>() {
+			@Override
+			public boolean apply(Expenditure exp) {
+
+				DateTime now = (setDate != null) ? setDate : getNow();
+
+				boolean month = exp.getDateTime().getMonthOfYear() == now
+						.getMonthOfYear();
+
+				boolean year = exp.getDateTime().getYear() == now.getYear();
+
+				return month && year;
+			}
+		};
+
+		return getSelectedExpenditures(monthPredicate);
+	}
+
+	public List<Expenditure> getExpendituresThisYear(final DateTime setDate) {
+
+		Predicate<Expenditure> yearPredicate = new Predicate<Expenditure>() {
+			@Override
+			public boolean apply(Expenditure exp) {
+				DateTime now = (setDate != null) ? setDate : getNow();
+
+				return exp.getDateTime().getYear() == now.getYear();
+			}
+		};
+
+		return getSelectedExpenditures(yearPredicate);
+	}
+
+	public List<Expenditure> getExpendituresInBetween(final DateTime from,
+			final DateTime to) {
+
+		Predicate<Expenditure> inBetweenPredicate = new Predicate<Expenditure>() {
+			@Override
+			public boolean apply(Expenditure exp) {
+
+				long millis = exp.getDateTime().toInstant().getMillis();
+
+				return from.isBefore(millis) && to.isAfter(millis);
+			}
+		};
+
+		return getSelectedExpenditures(inBetweenPredicate);
+	}
+
+	public List<Expenditure> getSelectedExpenditures(
 			Predicate<Expenditure> timePredicate) {
 
 		List<Expenditure> expenditures = new ArrayList<Expenditure>(
@@ -139,6 +206,10 @@ public class ExpenditureDatasource {
 		expenditure.setDateTime(dateTime);
 
 		return expenditure;
+	}
+
+	private DateTime getNow() {
+		return new DateTime();
 	}
 
 }
